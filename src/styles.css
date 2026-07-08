@@ -52,11 +52,11 @@
   --brand-light: oklch(0.92 0.06 140);     /* G50 wash */
 
   --background: oklch(0.985 0.012 95);     /* cream W100 */
-  --surface: oklch(0.975 0.02 95);         /* W200 cream */
+  --surface: #F7F7E2;         /* W200 cream */
   --surface-muted: oklch(0.955 0.03 95);   /* W300 */
   --foreground: oklch(0.22 0.02 145);
 
-  --card: oklch(1 0 0);
+  --card: #FEFEFC;
   --card-foreground: oklch(0.22 0.02 145);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.22 0.02 145);
@@ -87,7 +87,7 @@
 
 .dark {
   --background: oklch(0.18 0.02 145);
-  --surface: oklch(0.22 0.03 145);
+  --surface: #F7F7E2;
   --surface-muted: oklch(0.26 0.03 145);
   --foreground: oklch(0.96 0.01 95);
   --card: oklch(0.24 0.03 145);

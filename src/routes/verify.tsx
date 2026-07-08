@@ -100,13 +100,6 @@ function VerifyPage() {
           ? "Facial Scan Match"
           : "Verification"
       }
-      subtitle={
-        step === "profile"
-          ? "Confirm your demographic details fetched from the NIMC database."
-          : step === "biometric"
-          ? "Align your face in the frame. Processing happens on-device."
-          : `Enter the 6-digit code we sent to ${email}.`
-      }
     >
       {step === "otp" && (
         <form onSubmit={submitOtp} className="space-y-6">

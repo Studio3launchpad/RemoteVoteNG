@@ -11,15 +11,15 @@ export const Route = createFileRoute("/signup")({
 
 function SignUpPage() {
   const nav = useNavigate();
-  const [form, setForm] = useState({ nin: "", email: "", password: "" });
+  const [form, setForm] = useState({ nin: "", email: "", password: "", confirm_password: "" });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!/^\d{11}$/.test(form.nin)) return setError("NIN must be exactly 11 digits.");
-    if (!form.email.trim() || !form.email.includes("@")) return setError("Please enter a valid email address.");
     if (form.password.length < 6) return setError("Password must be at least 6 characters.");
+    if (form.password !== form.confirm_password) return setError("Password does not match");
     
     setError(null);
     setLoading(true);
@@ -55,10 +55,10 @@ function SignUpPage() {
       title="Create Account"
       subtitle="Register once to vote securely from anywhere. Your details are verified with NIMC."
       footer={
-        <>
+        <div className="font-semibold text-[16px] md:text-[18px] hover:underline">
           Already have an account?{" "}
-          <Link to="/" className="font-semibold text-brand hover:underline">Sign in</Link>
-        </>
+          <Link to="/" className="text-brand">Sign in</Link>
+        </div>
       }
     >
       <form onSubmit={submit} className="space-y-4">
@@ -72,23 +72,32 @@ function SignUpPage() {
             className={inputClass}
           />
         </FormField>
-        
-        <FormField label="Email Address" hint="Verification code will be sent to this email.">
+        <FormField label="Email" hint="We'll send a verification code to this email.">
           <input
-            type="email"
+            inputMode="email"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
-            placeholder="e.g. voter@example.com"
+            placeholder="Enter your email"
             className={inputClass}
           />
         </FormField>
-
+        
         <FormField label="Create Password" hint="Minimum 6 characters.">
           <input
             type="password"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
             placeholder="Enter a strong password"
+            className={inputClass}
+          />
+        </FormField>
+
+        <FormField label="Confirm Password" hint="Re-type Password">
+          <input
+            type="password"
+            value={form.confirm_password}
+            onChange={(e) => setForm({ ...form, confirm_password: e.target.value })}
+            placeholder="Please Re-enter Password"
             className={inputClass}
           />
         </FormField>

@@ -80,12 +80,12 @@ function SignInPage() {
       title="Sign in"
       subtitle="Enter your NIN and password to continue your secure session."
       footer={
-        <>
+        <div className="font-semibold text-[16px] md:text-[18px] hover:underline">
           Don't have an account?{" "}
-          <Link to="/signup" className="font-semibold text-brand hover:underline">
+          <Link to="/signup" className="text-brand">
             Create Account
           </Link>
-        </>
+        </div>
       }
     >
       <form onSubmit={onSubmit} className="space-y-4">
@@ -114,41 +114,13 @@ function SignInPage() {
           </p>
         )}
 
-        <div className="flex items-center justify-between text-sm">
-          <label className="flex items-center gap-2 text-muted-foreground">
-            <input type="checkbox" className="h-4 w-4 accent-[oklch(0.5_0.17_145)]" /> Remember me
-          </label>
-          <Link to="/forgot" className="font-medium text-brand hover:underline">Forgot password?</Link>
+        <div className="flex items-center mb-[32px] text-[16px] lg:text-[18px] font-bold justify-end">
+          <Link to="/forgot" className="text-brand hover:underline">Forgot password?</Link>
         </div>
 
         <button type="submit" disabled={loading} className={primaryBtnClass}>
           {loading ? "Signing in…" : "Sign in"}
         </button>
-
-        <p className="text-center text-xs text-muted-foreground">
-          By continuing you agree to our voter privacy notice — your NIN is decoupled from your ballot.
-        </p>
-
-        <div className="mt-2 border-t border-border pt-4 flex flex-col gap-2 text-center text-xs text-muted-foreground">
-          <p className="font-medium text-foreground/60 uppercase tracking-wider text-[9px]">Other Portals</p>
-          <div className="flex gap-2 justify-center flex-wrap">
-            <Link
-              to="/accreditation"
-              className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition"
-            >
-              📰 Apply for Media / Observer Accreditation
-            </Link>
-            <Link
-              to="/signup"
-              className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition"
-            >
-              🗳️ Register as a Voter
-            </Link>
-          </div>
-          <p className="text-[10px] text-muted-foreground/60">
-            Electoral staff? Use the invitation link sent to your official email.
-          </p>
-        </div>
       </form>
     </AuthLayout>
   );
