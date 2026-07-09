@@ -3,6 +3,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { getSession } from "@/lib/mock-store";
 import React, { useEffect, useState } from "react";
 import { apiRequest, Voter, Election } from "@/lib/api";
+import { PaginationControls } from "@/components/PaginationControls";
 import { 
   CalendarDays, CheckCircle2, ChevronRight, Vote, ShieldCheck, Mail, MapPin, 
   User, Eye, EyeOff, Lock, AlertTriangle, Activity, FileText, Check, Database, 
@@ -170,34 +171,33 @@ function DashboardPage() {
       });
     }
 
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        // Fetch fresh profile details
-        const freshProfile = await apiRequest<Voter>("/auth/profile/");
-        setProfile(freshProfile);
-        
-        // Sync role and staff number to mock-store session for persistence
-        const s = getSession();
-        if (s) {
-          (s as any).role = freshProfile.role;
-          (s as any).staff_number = freshProfile.staff_number;
-          (s as any).fullName = freshProfile.full_name;
-          (s as any).state = freshProfile.state;
-          (s as any).lga = freshProfile.lga;
-          localStorage.setItem("rvng.session.v1", JSON.stringify(s));
-        }
+    const fetchData = () => {
+      setLoading(true);
 
-        // Fetch elections
-        const electionsData = await apiRequest<Election[]>("/elections/");
-        setElections(electionsData);
-      } catch (err: any) {
-        console.error("Dashboard data load failed:", err);
-        setError("Session expired or server unavailable.");
-        nav({ to: "/" });
-      } finally {
-        setLoading(false);
-      }
+      apiRequest<Election[]>("/elections/")
+        .then(setElections)
+        .catch(console.error);
+
+      apiRequest<Voter>("/auth/profile/")
+        .then(freshProfile => {
+          setProfile(freshProfile);
+          
+          const s = getSession();
+          if (s) {
+            (s as any).role = freshProfile.role;
+            (s as any).staff_number = freshProfile.staff_number;
+            (s as any).fullName = freshProfile.full_name;
+            (s as any).state = freshProfile.state;
+            (s as any).lga = freshProfile.lga;
+            localStorage.setItem("rvng.session.v1", JSON.stringify(s));
+          }
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("Dashboard data load failed:", err);
+          setError("Session expired or server unavailable.");
+          nav({ to: "/" });
+        });
     };
 
     fetchData();
@@ -358,8 +358,14 @@ function CommissionerDashboard() {
   const [invitations, setInvitations] = useState<any[]>([]);
   const [pollingUnits, setPollingUnits] = useState<any[]>([]);
   const [nimcRecords, setNimcRecords] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadState, setLoadState] = useState({ el: true, acc: true, inv: true, pu: true, nimc: true });
   const [activeTab, setActiveTab] = useState<'elections' | 'accreditations' | 'invitations' | 'pollingUnits' | 'nimc'>('elections');
+  
+  const loading = activeTab === 'elections' ? loadState.el :
+                  activeTab === 'accreditations' ? loadState.acc :
+                  activeTab === 'invitations' ? loadState.inv :
+                  activeTab === 'pollingUnits' ? loadState.pu :
+                  activeTab === 'nimc' ? loadState.nimc : false;
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState("");
@@ -401,26 +407,33 @@ function CommissionerDashboard() {
   const [nimcForm, setNimcForm] = useState({ nin: '', full_name: '', state: 'Lagos', lga: '', biometric_hash: 'mock_biometric_hash_xyz_123' });
   const [editingNimcId, setEditingNimcId] = useState<number | null>(null);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [electionsData, accreditationsData, invitationsData, puData, nimcData] = await Promise.all([
-        apiRequest<ApiElection[]>('/commissioner/elections/'),
-        apiRequest<any[]>('/onboarding/accreditation/'),
-        apiRequest<any[]>('/onboarding/invitations/'),
-        apiRequest<any[]>('/polling-units/'),
-        apiRequest<any[]>('/nimc-records/')
-      ]);
-      setElections(electionsData);
-      setAccreditations(accreditationsData);
-      setInvitations(invitationsData);
-      setPollingUnits(puData);
-      setNimcRecords(nimcData);
-    } catch (e: any) {
-      setMsg({ text: e?.message || 'Failed to load control centre datasets', type: 'err' });
-    } finally {
-      setLoading(false);
-    }
+  const fetchData = () => {
+    setLoadState({ el: true, acc: true, inv: true, pu: true, nimc: true });
+    
+    apiRequest<ApiElection[]>('/commissioner/elections/')
+      .then(setElections)
+      .catch(e => setMsg({ text: e?.message || 'Failed to load elections', type: 'err' }))
+      .finally(() => setLoadState(p => ({ ...p, el: false })));
+
+    apiRequest<any[]>('/onboarding/accreditation/')
+      .then(setAccreditations)
+      .catch(e => setMsg({ text: e?.message || 'Failed to load accreditations', type: 'err' }))
+      .finally(() => setLoadState(p => ({ ...p, acc: false })));
+
+    apiRequest<any[]>('/onboarding/invitations/')
+      .then(setInvitations)
+      .catch(e => setMsg({ text: e?.message || 'Failed to load invitations', type: 'err' }))
+      .finally(() => setLoadState(p => ({ ...p, inv: false })));
+
+    apiRequest<any[]>('/polling-units/')
+      .then(setPollingUnits)
+      .catch(e => setMsg({ text: e?.message || 'Failed to load polling units', type: 'err' }))
+      .finally(() => setLoadState(p => ({ ...p, pu: false })));
+
+    apiRequest<any[]>('/nimc-records/')
+      .then(setNimcRecords)
+      .catch(e => setMsg({ text: e?.message || 'Failed to load NIMC records', type: 'err' }))
+      .finally(() => setLoadState(p => ({ ...p, nimc: false })));
   };
 
   const handleImportCSV = async (e: React.ChangeEvent<HTMLInputElement>, type: 'polling-units' | 'nimc' | 'invitations') => {
@@ -1782,8 +1795,18 @@ function SecretaryDashboard() {
   const [pollingUnits, setPollingUnits] = useState<any[]>([]);
   const [nimcRecords, setNimcRecords] = useState<any[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadState, setLoadState] = useState({ 
+    metrics: true, el: true, acc: true, inv: true, pu: true, nimc: true, logs: true 
+  });
   const [activeTab, setActiveTab] = useState<'metrics' | 'invitations' | 'accreditations' | 'elections' | 'pollingUnits' | 'nimc' | 'logs'>('metrics');
+
+  const loading = activeTab === 'metrics' ? loadState.metrics :
+                  activeTab === 'elections' ? loadState.el :
+                  activeTab === 'accreditations' ? loadState.acc :
+                  activeTab === 'invitations' ? loadState.inv :
+                  activeTab === 'pollingUnits' ? loadState.pu :
+                  activeTab === 'nimc' ? loadState.nimc :
+                  activeTab === 'logs' ? loadState.logs : false;
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState("");
@@ -1800,30 +1823,43 @@ function SecretaryDashboard() {
   // System audit expanded log state
   const [expandedLog, setExpandedLog] = useState<number | null>(null);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [metricsData, electionsData, accreditationsData, invitationsData, puData, nimcData, logsData] = await Promise.all([
-        apiRequest<any>('/secretary/metrics/'),
-        apiRequest<ApiElection[]>('/commissioner/elections/'),
-        apiRequest<any[]>('/onboarding/accreditation/'),
-        apiRequest<any[]>('/onboarding/invitations/'),
-        apiRequest<any[]>('/polling-units/'),
-        apiRequest<any[]>('/nimc-records/'),
-        apiRequest<any[]>('/audit-logs/')
-      ]);
-      setMetrics(metricsData);
-      setElections(electionsData);
-      setAccreditations(accreditationsData);
-      setInvitations(invitationsData);
-      setPollingUnits(puData);
-      setNimcRecords(nimcData);
-      setLogs(logsData);
-    } catch (e: any) {
-      setMsg({ text: e?.message || 'Failed to load secretary datasets', type: 'err' });
-    } finally {
-      setLoading(false);
-    }
+  const fetchData = () => {
+    setLoadState({ metrics: true, el: true, acc: true, inv: true, pu: true, nimc: true, logs: true });
+
+    apiRequest<any>('/secretary/metrics/')
+      .then(setMetrics)
+      .catch(e => setMsg({ text: e?.message || 'Failed to load metrics', type: 'err' }))
+      .finally(() => setLoadState(p => ({ ...p, metrics: false })));
+
+    apiRequest<ApiElection[]>('/commissioner/elections/')
+      .then(setElections)
+      .catch(e => setMsg({ text: e?.message || 'Failed to load elections', type: 'err' }))
+      .finally(() => setLoadState(p => ({ ...p, el: false })));
+
+    apiRequest<any[]>('/onboarding/accreditation/')
+      .then(setAccreditations)
+      .catch(e => setMsg({ text: e?.message || 'Failed to load accreditations', type: 'err' }))
+      .finally(() => setLoadState(p => ({ ...p, acc: false })));
+
+    apiRequest<any[]>('/onboarding/invitations/')
+      .then(setInvitations)
+      .catch(e => setMsg({ text: e?.message || 'Failed to load invitations', type: 'err' }))
+      .finally(() => setLoadState(p => ({ ...p, inv: false })));
+
+    apiRequest<any[]>('/polling-units/')
+      .then(setPollingUnits)
+      .catch(e => setMsg({ text: e?.message || 'Failed to load polling units', type: 'err' }))
+      .finally(() => setLoadState(p => ({ ...p, pu: false })));
+
+    apiRequest<any[]>('/nimc-records/')
+      .then(setNimcRecords)
+      .catch(e => setMsg({ text: e?.message || 'Failed to load NIMC records', type: 'err' }))
+      .finally(() => setLoadState(p => ({ ...p, nimc: false })));
+
+    apiRequest<any[]>('/audit-logs/')
+      .then(setLogs)
+      .catch(e => setMsg({ text: e?.message || 'Failed to load audit logs', type: 'err' }))
+      .finally(() => setLoadState(p => ({ ...p, logs: false })));
   };
 
   const handleImportCSV = async (e: React.ChangeEvent<HTMLInputElement>, type: 'polling-units' | 'nimc' | 'invitations') => {
@@ -3586,11 +3622,12 @@ function AuditorDashboard() {
     fetchLogs();
   }, []);
 
-  const fetchLogs = async () => {
+  const fetchLogs = async (page = 1) => {
     try {
       setLoading(true);
-      const data = await apiRequest("/audit-logs/");
+      const data = await apiRequest(`/audit-logs/?page=${page}`);
       setLogs(data);
+      setLogsPage(page);
     } catch (e) {
       console.error(e);
     } finally {
@@ -3682,6 +3719,13 @@ function AuditorDashboard() {
             })}
           </ul>
         )}
+
+        <PaginationControls 
+          currentPage={logsPage}
+          totalPages={Math.ceil(((logs as any).count || 0) / 50)}
+          count={(logs as any).count || logs.length}
+          onPageChange={fetchLogs}
+        />
       </div>
     </section>
   );

@@ -35,6 +35,19 @@ export interface Election {
   has_voted: boolean;
 }
 
+export type PaginatedArray<T> = T[] & {
+  count?: number;
+  next?: string | null;
+  previous?: string | null;
+};
+
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T;
+}
+
 export function getAuthToken(): string | null {
   if (typeof window === 'undefined') return null;
   return window.localStorage.getItem('rvng.token');
@@ -85,6 +98,16 @@ export async function apiRequest<T = any>(
   if (!response.ok) {
     const errorMessage = data.error || data.detail || Object.values(data).flat().join(', ') || 'An error occurred';
     throw new Error(errorMessage);
+  }
+
+  // Intercept DRF paginated responses and convert to PaginatedArray
+  // This prevents breaking existing code that expects an array and uses .map()
+  if (data && typeof data === 'object' && 'count' in data && 'results' in data && Array.isArray(data.results)) {
+    const arr = data.results as PaginatedArray<any>;
+    arr.count = data.count;
+    arr.next = data.next;
+    arr.previous = data.previous;
+    return arr as unknown as T;
   }
 
   return data;
