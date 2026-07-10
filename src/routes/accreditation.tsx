@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { apiRequest } from "../lib/api";
 import { AppHeader } from "@/components/AppHeader";
-import { inputClass } from "@/components/AuthLayout";
+import { inputClass, primaryBtnClass } from "@/components/AuthLayout";
 
 export const Route = createFileRoute("/accreditation")({
   component: AccreditationPage,
@@ -91,16 +91,16 @@ function AccreditationPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-brand/20">
       <AppHeader />
       
-      <main className="flex-1 relative overflow-hidden py-12">
+      <main className="flex-1 relative overflow-hidden py-12 px-[16px]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-brand/15 via-background to-background pointer-events-none" />
         <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[600px] h-[600px] bg-brand/5 rounded-full blur-[100px] pointer-events-none" />
         
         <div className="acc-container relative z-10">
 
         <div className="acc-hero">
-          <div className="acc-inec-badge">🏛️ INEC Accreditation Portal</div>
-          <h1>Apply for Electoral Accreditation</h1>
-          <p>
+          <div className="acc-inec-badge text-[10px] md:text-[12px]">INEC Accreditation Portal</div>
+          <h1 className="text-[31px] md:text-[35px]">Apply for Electoral Accreditation</h1>
+          <p className="text-[16px] md:text-[18px]">
             Media organizations, domestic civil society groups, and international observer missions may
             apply here to receive INEC accreditation for monitoring the election.
           </p>
@@ -117,18 +117,18 @@ function AccreditationPage() {
                   onClick={() => setSelectedType(type)}
                 >
                   <div className="acc-type-icon">{info.icon}</div>
-                  <strong>{info.label}</strong>
-                  <p>{info.desc}</p>
+                  <strong className="text-[20px] md:text-[23px]">{info.label}</strong>
+                  <p className="text-[16px] md:text-[18px]">{info.desc}</p>
                   {selectedType === type && <div className="acc-check">✓ Selected</div>}
                 </button>
               ))}
             </div>
             <button
-              className="btn-acc-continue"
+              className={primaryBtnClass}
               disabled={!selectedType}
               onClick={() => setStep("form")}
             >
-              Continue to Application →
+              Continue to Application  
             </button>
           </>
         )}
@@ -137,13 +137,13 @@ function AccreditationPage() {
           <div className="acc-form-section">
             <div className="acc-type-pill">
               {APP_TYPE_INFO[selectedType].icon} {APP_TYPE_INFO[selectedType].label}
-              <button className="change-type" onClick={() => setStep("select")}>Change</button>
+              <button className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-[8px] border-2 border-border bg-card px-[16px] md:px-0 md:py-0 py-[8px] text-[14px] font-semibold text-foreground shadow-sm transition hover:border-brand/30 hover:bg-brand/5 ml-4" onClick={() => setStep("select")}>Change</button>
             </div>
 
             <form onSubmit={handleSubmit} className="acc-form">
               <div className="form-row-2">
-                <div className="form-group">
-                  <label>Organization Name *</label>
+                <div>
+                  <label className="text-[16px] text-[18px]">Organization Name *</label>
                   <input
                     type="text"
                     placeholder="e.g., Channels Television"
@@ -154,8 +154,8 @@ function AccreditationPage() {
                   {errors.organization_name && <span className="ferr">{errors.organization_name}</span>}
                 </div>
 
-                <div className="form-group">
-                  <label>Contact Person *</label>
+                <div>
+                  <label className="text-[16px] md:text-[18px]">Contact Person *</label>
                   <input
                     type="text"
                     placeholder="Full name of primary contact"
@@ -168,8 +168,8 @@ function AccreditationPage() {
               </div>
 
               <div className="form-row-2">
-                <div className="form-group">
-                  <label>Contact Email *</label>
+                <div>
+                  <label className="text-[16px] md:text-[18px]">Contact Email *</label>
                   <input
                     type="email"
                     placeholder="email@organization.org"
@@ -180,8 +180,8 @@ function AccreditationPage() {
                   {errors.contact_email && <span className="ferr">{errors.contact_email}</span>}
                 </div>
 
-                <div className="form-group">
-                  <label>Phone Number *</label>
+                <div>
+                  <label className="text-[16px] md:text-[18px]">Phone Number *</label>
                   <input
                     type="tel"
                     placeholder="+234 800 000 0000"
@@ -193,8 +193,8 @@ function AccreditationPage() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label>{APP_TYPE_INFO[selectedType].idLabel} *</label>
+              <div>
+                <label className="text-[16px] md:text-[18px]">{APP_TYPE_INFO[selectedType].idLabel} *</label>
                 <input
                   type="text"
                   placeholder="Enter your organization's registration or reference number"
@@ -205,8 +205,8 @@ function AccreditationPage() {
                 {errors.organization_id && <span className="ferr">{errors.organization_id}</span>}
               </div>
 
-              <div className="form-group">
-                <label>Mandate / Coverage Description *</label>
+              <div>
+                <label className="text-[16px] md:text-[18px]">Mandate / Coverage Description *</label>
                 <textarea
                   rows={5}
                   placeholder="Briefly describe your organization's mandate, coverage area, and what you intend to monitor or report. (Minimum 50 characters)"
@@ -224,18 +224,18 @@ function AccreditationPage() {
                 </div>
               )}
 
-              <div className="acc-form-actions">
-                <button type="button" className="btn-acc-back" onClick={() => setStep("select")}>
-                  ← Back
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
+                <button type="button" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-[8px] border-2 border-border bg-card px-[32px] py-[16px] text-[16px] lg:text-[18px] font-semibold text-foreground shadow-sm transition hover:border-brand/30 hover:bg-brand/5" onClick={() => setStep("select")}>
+                    Back
                 </button>
-                <button type="submit" disabled={loading} className="btn-acc-submit">
-                  {loading ? <><span className="spinner-sm" /> Submitting…</> : "📨 Submit Application"}
+                <button type="submit" disabled={loading} className={`${primaryBtnClass} sm:w-auto`}>
+                  {loading ? <><span className="spinner-sm" /> Submitting...</> : "Submit Application"}
                 </button>
               </div>
             </form>
 
-            <div className="acc-privacy-note">
-              🔒 Your information is protected and will only be used for INEC accreditation verification purposes.
+            <div className="acc-privacy-note border-none">
+               Your information is protected and will only be used for INEC accreditation verification purposes.
               Approved organizations will receive a portal access link via the provided email.
             </div>
           </div>
@@ -276,7 +276,7 @@ function AccreditationPage() {
                 </div>
               </div>
             </div>
-            <Link to="/" className="btn-acc-home">Return to Home</Link>
+            <Link to="/" className={primaryBtnClass}>Return to Home</Link>
           </div>
         )}
       </div>
@@ -284,7 +284,7 @@ function AccreditationPage() {
 
       <style>{`
         .acc-container {
-          max-width: 820px;
+          padding: 0 144px;
           margin: 0 auto;
         }
 
@@ -299,7 +299,7 @@ function AccreditationPage() {
           border: 1px solid color-mix(in srgb, var(--color-brand) 35%, transparent);
           border-radius: 50px;
           padding: 0.35rem 1rem;
-          font-size: 0.82rem;
+          font-weight: bold;
           color: var(--color-brand);
           margin-bottom: 1rem;
         }
@@ -365,13 +365,11 @@ function AccreditationPage() {
         .acc-type-card strong {
           display: block;
           color: var(--color-foreground);
-          font-size: 0.9rem;
           margin-bottom: 0.5rem;
         }
 
         .acc-type-card p {
           color: var(--color-muted-foreground);
-          font-size: 0.8rem;
           line-height: 1.5;
           margin: 0;
         }
@@ -445,17 +443,6 @@ function AccreditationPage() {
 
         @media (max-width: 600px) { .form-row-2 { grid-template-columns: 1fr; } }
 
-        .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-
-        .form-group label {
-          color: var(--color-foreground);
-          font-size: 0.82rem;
-          font-weight: 500;
-        }
-
-        .form-group input.err, .form-group textarea.err { border-color: #ef4444; }
-
-        .form-group small { color: var(--color-muted-foreground); font-size: 0.77rem; }
         .ferr { color: #f87171; font-size: 0.8rem; }
 
         .acc-submit-error {

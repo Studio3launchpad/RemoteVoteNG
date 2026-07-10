@@ -23,7 +23,7 @@ export function AppHeader() {
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
           <Link to="/" className="flex items-center gap-2">
             <img src={Logo} alt="Brand Logo" />
-            <span className="font-display font-bold">RemoteVote <span className="text-brand">NG</span></span>
+            <span className="font-display font-bold text-[16px] md:text-[18px]">RemoteVote <span className="text-brand">NG</span></span>
           </Link>
 
 
@@ -46,7 +46,7 @@ export function AppHeader() {
                    <Link
                      key={n.to}
                      to={n.to}
-                     className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                     className={`rounded-lg px-3 py-1.5 text-[13px] md:text-[14px] font-medium transition-colors ${
                        active ? "bg-primary-soft text-brand-dark" : "text-muted-foreground hover:text-foreground"    
                      }`}
                    >
@@ -69,7 +69,7 @@ text-sm font-medium hover:bg-muted"
                aria-label="Sign out"
              >
                <LogOut className="h-4 w-4" />
-               <span className="hidden sm:inline">Sign out</span>
+               <span className="hidden sm:inline text-[14px]">Sign out</span>
              </button>
            </>
          ) : (

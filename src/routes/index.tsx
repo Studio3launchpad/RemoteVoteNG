@@ -19,7 +19,7 @@ function LandingPage() {
           <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[600px] h-[600px] bg-brand/5 rounded-full blur-[100px] pointer-events-none" />
           
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand/10 border border-brand/20 text-brand text-sm font-semibold mb-8 hover:bg-brand/15 transition-colors cursor-default">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand/10 border border-brand/20 text-brand text-[10px] md:text-[12px] font-semibold mb-8 hover:bg-brand/15 transition-colors cursor-default">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-brand"></span>
@@ -27,21 +27,21 @@ function LandingPage() {
               2026 General Elections Live
             </div>
             
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground mb-4 max-w-4xl mx-auto leading-[1.1]">
+            <h1 className="text-[49px] md:text-[55px] font-extrabold tracking-tight text-foreground mb-4 max-w-4xl mx-auto leading-[1.1]">
               The Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-emerald-400">Nigerian Democracy</span>
             </h1>
             
-            <p className="text-base md:text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-[16px] md:text-[18px] text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
               Secure, inclusive, and transparent remote voting. Empowering every eligible Nigerian to cast their ballot from anywhere with uncompromising integrity.
             </p>
             
             {/* Primary CTA */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-              <Link to="/login" className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand/25 hover:bg-brand/90 hover:-translate-y-0.5 transition-all duration-200">
+              <Link to="/login" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-[8px] bg-brand px-[32px] py-[16px] text-[16px] lg:text-[18px] font-semibold text-white shadow-sm transition hover:bg-brand-dark">
                 <Fingerprint className="h-5 w-5" />
                 Sign in to Vote
               </Link>
-              <Link to="/accreditation" className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-full border-2 border-border bg-card px-8 py-3.5 text-base font-semibold text-foreground shadow-sm hover:border-brand/30 hover:bg-brand/5 hover:-translate-y-0.5 transition-all duration-200">
+              <Link to="/accreditation" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-[8px] border-2 border-border bg-card px-[32px] py-[16px] text-[16px] lg:text-[18px] font-semibold text-foreground shadow-sm transition hover:border-brand/30 hover:bg-brand/5">
                 <ShieldCheck className="h-5 w-5 text-brand" />
                 Apply for Accreditation
               </Link>
@@ -78,8 +78,8 @@ function LandingPage() {
                 ].map((feature, i) => (
                   <div key={i} className="flex flex-col items-center text-center p-4">
                     <feature.icon className={`h-8 w-8 mb-4 ${feature.color}`} />
-                    <h3 className="font-bold mb-1">{feature.title}</h3>
-                    <p className="text-xs text-muted-foreground">{feature.desc}</p>
+                    <h3 className="font-bold text-[16px] mb-1">{feature.title}</h3>
+                    <p className="text-[13px] text-muted-foreground">{feature.desc}</p>
                   </div>
                 ))}
               </div>
